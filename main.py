@@ -1,4 +1,4 @@
-from marapets_scrapper import Marapets
+from marapets_scrapper import Marapets, actions
 
 
 marapets = Marapets()
