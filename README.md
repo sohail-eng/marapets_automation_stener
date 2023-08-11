@@ -23,7 +23,7 @@ python -m venv venv
 Windows
 
 ```commandline
-.venv/Scripts/activate
+./venv/Scripts/activate
 ```
 
 Linux
@@ -37,7 +37,7 @@ source venv/bin/activate
 # Install Requirements
 
 ```commandline
-./setup.sh
+bash ./setup.sh
 ```
 
 # Run Project

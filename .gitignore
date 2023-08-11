@@ -1,5 +1,6 @@
 .gitignore
 .idea
 venv
-drivers
+drivers/chromedriver
+drivers/LICENSE.chromedriver
 creds_cookie.pkl
