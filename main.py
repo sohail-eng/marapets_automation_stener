@@ -1,5 +1,6 @@
-from marapets_scrapper import Marapets, actions
+from marapets_scrapper import Marapets
 
 
 marapets = Marapets()
-print("OK")
+marapets.automate()
+print("Done")

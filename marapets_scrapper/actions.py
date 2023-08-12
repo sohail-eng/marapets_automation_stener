@@ -19,18 +19,18 @@ def __prompt_email_password():
 
 
 def page_has_loaded(driver):
-    page_state = driver.execute_script('return document.readyState;')
-    return page_state == 'complete'
+    page_state = driver.execute_script("return document.readyState;")
+    return page_state == "complete"
 
 
 def load_cookies(driver):
     driver.get(BASE_URL)
     if os.path.isfile(c.COOKIE_FILE_NAME):
-        with open(c.COOKIE_FILE_NAME, 'rb') as file:
+        with open(c.COOKIE_FILE_NAME, "rb") as file:
             cookies = pickle.load(file)
             for cookie in cookies:
                 driver.add_cookie(cookie)
-        driver.get(f'{BASE_URL}')
+        driver.get(f"{BASE_URL}")
         sleep(2)
 
 
@@ -41,7 +41,7 @@ def action_click(driver, element):
 
 
 def save_cookies(driver):
-    pickle.dump(driver.get_cookies(), open(c.COOKIE_FILE_NAME, 'wb'))
+    pickle.dump(driver.get_cookies(), open(c.COOKIE_FILE_NAME, "wb"))
 
 
 def login(driver, email=None, password=None, timeout=10):
@@ -64,7 +64,7 @@ def login(driver, email=None, password=None, timeout=10):
         email_elem.send_keys(email)
     except NoSuchElementException:
         pass
-    except Exception as e:
+    except Exception:
         pass
     sleep(2)
     try:
@@ -72,18 +72,25 @@ def login(driver, email=None, password=None, timeout=10):
         action_click(driver=driver, element=submit_elem)
     except NoSuchElementException:
         pass
-    except Exception as e:
+    except Exception:
         pass
     try:
-        password_elem = driver.find_element(By.XPATH, "//input[contains(@name,'password')]")
+        password_elem = driver.find_element(
+            By.XPATH, "//input[contains(@name,'password')]"
+        )
         password_elem.send_keys(password)
+        recaptcha_elements = driver.find_elements(
+            By.XPATH, value="//div[contains(@class, '-recaptcha')]"
+        )
+        for item in recaptcha_elements:
+            driver.execute_script("arguments[0].remove();", item)
         password_elem.submit()
     except NoSuchElementException:
         pass
-    except Exception as e:
+    except Exception:
         pass
 
-    if driver.current_url == f'{BASE_URL}checkpoint/lg/login-submit':
+    if driver.current_url == f"{BASE_URL}checkpoint/lg/login-submit":
         remember = driver.find_element(By.ID, c.REMEMBER_PROMPT)
         if remember:
             remember.submit()

@@ -6,9 +6,8 @@ from selenium import webdriver
 from selenium.common import (
     TimeoutException,
     NoSuchElementException,
-    JavascriptException,
     ElementClickInterceptedException,
-    ElementNotInteractableException
+    ElementNotInteractableException,
 )
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
@@ -32,7 +31,7 @@ class Scraper:
         "This LinkedIn Page isn’t available",
         "This page doesn’t exist",
         "Page not found",
-        "The job you were looking for was not found."
+        "The job you were looking for was not found.",
     ]
 
     @staticmethod
@@ -52,11 +51,11 @@ class Scraper:
             driver_path = "drivers/chromedriver"
             options = Options()
             # options.add_argument('--headless')
-            options.add_argument('--disable-gpu')
-            options.add_argument('--disable-notifications')
+            options.add_argument("--disable-gpu")
+            options.add_argument("--disable-notifications")
             if proxy:
                 options.add_argument(f"--proxy-server={proxy}")
-            options.add_argument('start-maximized')
+            options.add_argument("start-maximized")
 
             return webdriver.Chrome(service=Service(driver_path), options=options)
         except Exception as e:
@@ -87,7 +86,15 @@ class Scraper:
             except (ElementClickInterceptedException, ElementNotInteractableException):
                 pass
 
-    def get_elements_by_time(self, by=By.CLASS_NAME, value='', seconds=5, base=None, single=True, element_count=None):
+    def get_elements_by_time(
+        self,
+        by=By.CLASS_NAME,
+        value="",
+        seconds=5,
+        base=None,
+        single=True,
+        element_count=None,
+    ):
         counter = 0
         if not base:
             base = self.driver
@@ -105,8 +112,10 @@ class Scraper:
             counter = counter + 1
             self.wait(1)
 
-    def get_element_text(self, by=By.CLASS_NAME, value='', seconds=3, base=None):
-        element = self.get_elements_by_time(by=by, value=value, seconds=seconds, base=base)
+    def get_element_text(self, by=By.CLASS_NAME, value="", seconds=3, base=None):
+        element = self.get_elements_by_time(
+            by=by, value=value, seconds=seconds, base=base
+        )
         if element:
             return element.text.strip()
         return ""
@@ -114,23 +123,15 @@ class Scraper:
     def wait_for_element_to_load(self, by=By.CLASS_NAME, name="pv-top-card", base=None):
         base = base or self.driver
         return WebDriverWait(base, self.WAIT_FOR_ELEMENT_TIMEOUT).until(
-            EC.presence_of_element_located(
-                (
-                    by,
-                    name
-                )
-            )
+            EC.presence_of_element_located((by, name))
         )
 
-    def wait_for_all_elements_to_load(self, by=By.CLASS_NAME, name="pv-top-card", base=None):
+    def wait_for_all_elements_to_load(
+        self, by=By.CLASS_NAME, name="pv-top-card", base=None
+    ):
         base = base or self.driver
         return WebDriverWait(base, self.WAIT_FOR_ELEMENT_TIMEOUT).until(
-            EC.presence_of_all_elements_located(
-                (
-                    by,
-                    name
-                )
-            )
+            EC.presence_of_all_elements_located((by, name))
         )
 
     def is_signed_in(self):
@@ -150,75 +151,6 @@ class Scraper:
             pass
         except Exception as e:
             logging.warning("Not fount", exc_info=e)
-
-    def scroll_to_half(self, class_name: str = None):
-        try:
-            if class_name:
-                self.driver.execute_script(
-                    f"my_div = document.getElementsByClassName('{class_name}')[0];"
-                    f"my_div.scrollTo(0,my_div.scrollHeight);"
-                )
-            else:
-                self.driver.execute_script(
-                    "window.scrollTo(0, Math.ceil(document.body.scrollHeight/2));"
-                )
-        except JavascriptException:
-            pass
-        except Exception as e:
-            logging.warning("Not fount", exc_info=e)
-
-    def scroll_to_top(self, class_name: str = None):
-        try:
-            if class_name:
-                self.driver.execute_script(
-                    f"my_div = document.getElementsByClassName('{class_name}')[0];"
-                    f"my_div.scrollTo(0,0);"
-                )
-            else:
-                self.driver.execute_script(
-                    "window.scrollTo(0, 0);"
-                )
-        except JavascriptException:
-            pass
-        except Exception as e:
-            logging.warning("Not fount", exc_info=e)
-
-    def get_document_height(self, class_name: str = None):
-        try:
-            if class_name:
-                return self.driver.execute_script(
-                    f"my_div = document.getElementsByClassName('{class_name}')[0];"
-                    f"return my_div.scrollHeight;"
-                )
-            return self.driver.execute_script(
-                "return document.body.scrollHeight;"
-            )
-        except JavascriptException:
-            pass
-        except Exception as e:
-            logging.warning("Not fount", exc_info=e)
-
-    def scroll_to_bottom(self, class_name: str = None):
-        try:
-            if class_name:
-                self.driver.execute_script(
-                    f"my_div = document.getElementsByClassName('{class_name}')[0];"
-                    f"my_div.scrollTo(0,my_div.scrollHeight);"
-                )
-            else:
-                self.driver.execute_script(
-                    "window.scrollTo(0, document.body.scrollHeight);"
-                )
-        except JavascriptException:
-            pass
-        except Exception as e:
-            logging.warning("Not fount", exc_info=e)
-
-    def scroll_class_name_element_to_page_percent(self, class_name: str, page_percent: float):
-        self.driver.execute_script(
-            f'elem = document.getElementsByClassName("{class_name}")[0]; '
-            f'elem.scrollTo(0, elem.scrollHeight*{str(page_percent)});'
-        )
 
     def __find_element_by_class_name__(self, class_name):
         try:
@@ -254,7 +186,7 @@ class Scraper:
                 return elem[0]
 
     def invalid_link(self):
-        text = self.driver.find_element(By.TAG_NAME, 'body').text
+        text = self.driver.find_element(By.TAG_NAME, "body").text
         for item in self.invalid_text:
             if item in text:
                 return True
